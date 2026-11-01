@@ -1,0 +1,316 @@
+/* Ustawienia, które najczęściej będziesz zmieniać */
+:root {
+  --tile-min: 130px; /* najmniejsza szerokość obrazka kategorii – zmniejsz, żeby w rzędzie mieściło się ich więcej */
+  --tile-ratio: auto; /* auto = oryginalne proporcje obrazków; 1 / 1 = wszystkie kwadratowe (przycięte) */
+  --caption-size: 0.95rem; /* wielkość podpisu pod obrazkiem */
+  --felt: #1f4b3b; /* sukno – tło strony */
+  --felt-deep: #163a2d;
+  --paper: #f8f8f4; /* jasny kolor: napisy, licznik, ekran pytania */
+  --ink: #1f2933; /* tekst na jasnym tle */
+  --ace: #c4302b; /* liczba pytań */
+  --serif: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--paper);
+  background: var(--felt);
+  font-family: var(--serif);
+}
+
+#app {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+}
+
+h1 {
+  margin: 0 0 20px;
+  font-size: 1.8rem;
+  line-height: 1.1;
+}
+
+/* ---------- Strona główna: obrazki kategorii z podpisem ---------- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--tile-min), 1fr));
+  gap: 18px 12px;
+  align-items: start;
+}
+
+.tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  font: inherit;
+  color: var(--paper);
+  background: none;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.tile:not(:disabled):hover {
+  translate: 0 -3px;
+}
+
+.tile img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--tile-ratio);
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Podpis pod obrazkiem */
+.name {
+  display: block;
+  margin-top: 7px;
+  font-size: var(--caption-size);
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+/* Kategoria bez obrazka (albo nie udało się go wczytać): pusta ramka */
+.tile-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  padding: 8px;
+  font-size: 0.85rem;
+  text-align: center;
+  color: rgb(248 248 244 / 0.65);
+  border: 2px dashed rgb(248 248 244 / 0.35);
+  border-radius: 10px;
+}
+
+/* Liczba pozostałych pytań – w rogu obrazka */
+.count {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  min-width: 1.9em;
+  padding: 1px 8px 2px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--ace);
+  background: var(--paper);
+  border-radius: 999px;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* Kategoria bez pytań: przygaszona */
+.tile:disabled {
+  cursor: default;
+}
+.tile:disabled img {
+  opacity: 0.3;
+  filter: grayscale(1);
+}
+.tile:disabled .name,
+.tile:disabled .tile-empty {
+  opacity: 0.65;
+}
+.tile:disabled .count {
+  color: #5b6470;
+}
+
+/* ---------- Ekran pytania ---------- */
+
+.back,
+.players button {
+  padding: 6px 14px;
+  font: inherit;
+  color: var(--paper);
+  background: none;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  cursor: pointer;
+}
+/* Pasek u góry ekranu pytania: zawsze widoczny, nawet przy dużym obrazku */
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.back {
+  padding: 8px 18px;
+}
+.reveal {
+  padding: 8px 20px;
+  font: inherit;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--paper);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.reveal:hover {
+  background: #fff;
+}
+.back:hover,
+.players button:hover {
+  background: rgb(248 248 244 / 0.12);
+}
+
+.question {
+  max-width: 960px;
+  padding: 20px;
+  color: var(--ink);
+  background: var(--paper);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 var(--felt-deep);
+}
+
+.question img {
+  display: block;
+  max-width: 100%;
+  max-height: 80vh;
+  margin: 0 auto;
+  border-radius: 8px;
+}
+
+.text {
+  margin: 0;
+  max-width: 62ch;
+  font-size: 2.55rem;
+  line-height: 1.6;
+  white-space: pre-wrap; /* zachowuje enter-y z data.ts */
+}
+
+.question img[hidden] {
+  display: none;
+}
+
+.question img:not([hidden]) + .text {
+  margin-top: 18px;
+}
+
+:focus-visible {
+  outline: 3px solid #ffd166;
+  outline-offset: 3px;
+}
+
+/* ---------- Gracze i punkty (na dole strony głównej) ---------- */
+
+.players {
+  max-width: 760px;
+  margin-top: 44px;
+}
+
+.players-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.players h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.1;
+}
+
+.players input {
+  padding: 8px 12px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--paper);
+  border: 0;
+  border-radius: 8px;
+}
+
+#add-player {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+#add-player[hidden] {
+  display: none;
+}
+#add-player input {
+  flex: 1;
+  min-width: 0;
+}
+
+#player-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.player {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 10px 14px;
+  background: var(--felt-deep);
+  border-radius: 10px;
+}
+
+.p-name {
+  font-size: 1.15rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.p-score {
+  min-width: 3ch;
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1;
+  text-align: right;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.p-score.neg {
+  color: #ff9d94; /* ujemny wynik */
+}
+
+.p-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.p-actions button[data-act="remove"] {
+  margin-left: 12px;
+}
+.p-amount {
+  width: 9rem;
+}
+
+.no-players {
+  padding: 4px 0;
+  color: rgb(248 248 244 / 0.7);
+}
+
+@media (min-width: 720px) {
+  .player {
+    grid-template-columns: minmax(7rem, 1fr) 5.5rem auto;
+  }
+  .p-actions {
+    grid-column: auto;
+  }
+}
